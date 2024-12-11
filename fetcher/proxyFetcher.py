@@ -246,10 +246,15 @@ class ProxyFetcher(object):
             proxies = free['proxies']
             for proxy in proxies:
                 yield f"{proxy['ip']}:{proxy['port']}"
-                    
-
+    
+    @staticmethod
+    def freeProxy13():
+        r = WebRequest().get("https://ip.uqidata.com/free/index.html", timeout=10)
+        tree = r.tree
+   
+# //*[@id="main_container"]/div[1]/table/tbody
 if __name__ == '__main__':
     p = ProxyFetcher()
-    p.freeProxy12()        
+    p.freeProxy13()        
 
 # http://nntime.com/proxy-list-01.htm
