@@ -133,11 +133,11 @@ def runFlask():
         StandaloneApplication(app, _options).run()
 
 
-import debugpy
-print("listening")
-debugpy.listen(("0.0.0.0", 6666))
-print("wait for client")
-debugpy.wait_for_client()
+# import debugpy
+# print("listening")
+# debugpy.listen(("0.0.0.0", 6666))
+# print("wait for client")
+# debugpy.wait_for_client()
 
 if __name__ == '__main__':
     runFlask()

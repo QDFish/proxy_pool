@@ -15,10 +15,14 @@ __author__ = 'JHao'
 import re
 import json
 from time import sleep
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from util.webRequest import WebRequest
+from handler.logHandler import LogHandler
 
-
+log = LogHandler('ProxyFetch')
 class ProxyFetcher(object):
     """
     proxy getter
@@ -161,7 +165,7 @@ class ProxyFetcher(object):
             yield ':'.join(proxy)
 
     @staticmethod
-    def freeProxy11():
+    def freeProxy11():        
         """ 稻壳代理 https://www.docip.net/ """
         r = WebRequest().get("https://www.docip.net/data/free.json", timeout=10)
         try:
@@ -232,10 +236,20 @@ class ProxyFetcher(object):
     #         for proxy in proxies:
     #             yield ':'.join(proxy)
 
+    @staticmethod
+    def freeProxy12():
+        log.info('uu proxy loading')
+        r = WebRequest().get("https://uu-proxy.com/api/free", timeout=10)
+        result = r.json
+        if result['success'] == True:
+            free = result['free']
+            proxies = free['proxies']
+            for proxy in proxies:
+                yield f"{proxy['ip']}:{proxy['port']}"
+                    
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy06():
-        print(_)
+    p.freeProxy12()        
 
 # http://nntime.com/proxy-list-01.htm
