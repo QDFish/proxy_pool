@@ -249,12 +249,49 @@ class ProxyFetcher(object):
     
     @staticmethod
     def freeProxy13():
-        r = WebRequest().get("https://ip.uqidata.com/free/index.html", timeout=10)
-        tree = r.tree
+        r = WebRequest().get("https://ip.uqidata.com/free/type/https-1.html", timeout=10)        
+        tbody = r.tree.xpath('//table/tbody')[0]
+        trs = tbody.xpath('tr')
+        for idx in range(2, len(trs)):
+            tr = trs[idx]          
+            tds = tr.xpath('td')
+            tds_len = len(tds)
+            if tds_len >= 2:
+                raw_port = tds[1].xpath('text()')[0]
+                port_att = tds[1].xpath('@class')[0]
+                port = ProxyFetcher.logic(raw_port, port_att)
+                ip_td = tds[0]
+                ip_elements = ip_td.xpath('*[not(contains(@style, \'none\'))]')
+                ip = ''                
+                for ele in ip_elements:
+                    ip_es = ele.xpath('text()')
+                    if len(ip_es) == 1:
+                        ip = ip + ip_es[0]
+                yield f'{ip}:{port}'
+    
+    @staticmethod
+    def logic(a, b):
+        _ = ['.port', 'each', 'html', 'indexOf', '*', 'attr', 'class', 'split', ' ', '', 'length', 'push', 'ABCDEFGHIJZ', 'parseInt', 'join', '']
+        if '*' in a:
+            print('return')
+            return        
+        try:
+            b = b.split(" ")[1]
+            c = list(b)
+            d = len(c)
+            f = []
+            for g in range(d):
+                f.append(_[12].index(c[g]))
+            return int(''.join(map(str, f))) >> 0x3
+
+        except Exception as e:
+            print('error', e)
    
 # //*[@id="main_container"]/div[1]/table/tbody
 if __name__ == '__main__':
     p = ProxyFetcher()
-    p.freeProxy13()        
+    # p.logic("940", "ECGCEI")
+    p.freeProxy13()
+      
 
 # http://nntime.com/proxy-list-01.htm
