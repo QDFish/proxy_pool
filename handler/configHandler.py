@@ -44,6 +44,11 @@ class ConfigHandler(withMetaclass(Singleton)):
     def fetchers(self):
         reload_six(setting)
         return setting.PROXY_FETCHER
+    
+    @property
+    def only_https(self):
+        reload_six(setting)
+        return setting.HTTPS_ONLY
 
     @LazyProperty
     def httpUrl(self):

@@ -268,6 +268,48 @@ class ProxyFetcher(object):
                     if len(ip_es) == 1:
                         ip = ip + ip_es[0]
                 yield f'{ip}:{port}'
+                
+    @staticmethod
+    def freeProxy14():                
+        r = WebRequest().get("https://api.openproxylist.xyz/http.txt", timeout=10)
+        if r.response.status_code == 200:            
+            results = r.text.split('\n')
+            for result in results:
+                yield result
+        # if result['success'] == True:
+        #     free = result['free']
+        #     proxies = free['proxies']
+        #     for proxy in proxies:
+        #         yield f"{proxy['ip']}:{proxy['port']}"
+        
+    @staticmethod
+    def freeProxy15():
+        page = 1
+        while page <= 10:
+            if page == 1:
+                url = 'https://www.89ip.cn/index.html'
+            else:
+                url = f'https://www.89ip.cn/index_{page}.html'
+            r = WebRequest().get(url, timeout=10, verify=False)
+            if r.response.status_code == 200:
+                tbody = r.tree.xpath('//table/tbody')[0]
+                trs = tbody.xpath('tr')
+                for tr in trs:
+                    tds = tr.xpath('td')
+                    if len(tds) >= 2:                    
+                        ips = tds[0].xpath('text()')
+                        ports = tds[1].xpath('text()')
+                        if len(ips) == 1:
+                            ip = ips[0].strip()
+                        else:
+                            continue
+                        if len(ports) == 1:
+                            port = ports[0].strip()
+                        else:
+                            continue                   
+                        yield f'{ip}:{port}'
+            page = page + 1
+
     
     @staticmethod
     def logic(a, b):
@@ -291,7 +333,7 @@ class ProxyFetcher(object):
 if __name__ == '__main__':
     p = ProxyFetcher()
     # p.logic("940", "ECGCEI")
-    p.freeProxy13()
+    p.freeProxy15()
       
 
 # http://nntime.com/proxy-list-01.htm

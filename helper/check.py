@@ -39,12 +39,18 @@ class DoValidator(object):
         Returns:
             Proxy Object
         """
-        http_r = cls.httpValidator(proxy)
+        only_https = cls.conf.only_https
+        log = LogHandler("validator")        
+        log.info(f'only https: {only_https}')
+        # exit(0)
+        http_r = True
+        if only_https == False:
+            http_r = cls.httpValidator(proxy)
         https_r = False if not http_r else cls.httpsValidator(proxy)
 
         proxy.check_count += 1
         proxy.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        proxy.last_status = True if http_r else False
+        proxy.last_status = True if (http_r and (not only_https or https_r)) else False
         if http_r:
             if proxy.fail_count > 0:
                 proxy.fail_count -= 1
@@ -114,7 +120,7 @@ class _ThreadChecker(Thread):
 
     def __ifRaw(self, proxy):
         if proxy.last_status:
-            if self.proxy_handler.exists(proxy):
+            if self.proxy_handler.exists(proxy):                
                 self.log.info('RawProxyCheck - {}: {} exist'.format(self.name, proxy.proxy.ljust(23)))
             else:
                 self.log.info('RawProxyCheck - {}: {} pass'.format(self.name, proxy.proxy.ljust(23)))
